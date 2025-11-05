@@ -2,9 +2,8 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Europakarte mit Publikationsorten</title>
+  <title>Historische Europakarte</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
     body { margin: 0; font-family: sans-serif; }
@@ -13,12 +12,13 @@
 </head>
 <body>
   <div id="map"></div>
-  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const map = L.map('map').setView([50.5, 10.5], 5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
+    // OpenHistoricalMap as the base layer
+    L.tileLayer('https://tile.openhistoricalmap.org/tiles/{z}/{x}/{y}.png', {
+      attribution: '© OpenHistoricalMap contributors',
+      maxZoom: 20
     }).addTo(map);
     const locations = [
       { name: "Straßburg", lat: 48.5734, lng: 7.7521, link: "https://example.com/digitalisat-strassburg", description: "Karte von Straßburg, 1680" },
