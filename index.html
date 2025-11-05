@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Europakarte mit Publikationsorten</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheetflet@1.9.4/dist/leaflet.css
+  <style>
+    body { margin: 0; font-family: sans-serif; }
+    #map { height: 100vh; width: 100vw; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src=".com/leaflet@1.9.4/dist/leaflet.js</script>
+  <script>
+    // Karte initialisieren
+    const map = L.map('map').setView([50.5, 10.5], 5); // Europa-Zentrum
+
+    // OpenStreetMap-Tiles hinzufügen
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Daten für die drei Städte
+    const locations = [
+      {
+        name: "Straßburg",
+        lat: 48.5734,
+        lng: 7.7521,
+        link: "https://example.com/digitalisat-strassburg",
+        description: "Karte von Straßburg, 1680"
+      },
+      {
+        name: "Köln",
+        lat: 50.9375,
+        lng: 6.9603,
+        link: "https://example.com/digitalisat-koeln",
+        description: "Buch über Köln, 1702"
+      },
+      {
+        name: "Wien",
+        lat: 48.2082,
+        lng: 16.3738,
+        link: "https://example.com/digitalisat-wien",
+        description: "Karte von Wien, 1650"
+      }
+    ];
+
+    // Marker hinzufügen
+    locations.forEach(loc => {
+      const marker = L.marker([loc.lat, loc.lng]).addTo(map);
+      marker.bindPopup(
+        `<strong>${loc.name}</strong><br><a href="${loc.link}" target="_blank">${loc.description}</a>`
+>
+</body>
+</html>
