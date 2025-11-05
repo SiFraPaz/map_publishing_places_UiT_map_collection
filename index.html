@@ -4,26 +4,23 @@
   <meta charset="UTF-8">
   <title>Europakarte mit Publikationsorten</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/distdy { margin: 0; font-family: sans-serif; }
+  https://unpkg.com/leaflet@1.9.4/dist/leaflet.css
+  <style>
+    body { margin: 0; font-family: sans-serif; }
     #map { height: 100vh; width: 100vw; }
   </style>
 </head>
 <body>
   <div id="map"></div>
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaft>
+  https://unpkg.com/leaflet@1.9.4/dist/leaflet.js</script>
   <script>
-    // Karte initialisieren
     const map = L.map('map').setView([50.5, 10.5], 5); // Europa-Zentrum
 
-    // OpenStreetMap-Tiles hinzufügen
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // Daten für die drei Städte
     const locations = [
       {
         name: "Straßburg",
@@ -48,9 +45,10 @@
       }
     ];
 
-    // Marker hinzufügen
     locations.forEach(loc => {
       const marker = L.marker([loc.lat, loc.lng]).addTo(map);
-      marker.bindPopup(
-        `<strong>${loc.name}</strong><br><a href="${loc.link}" target="_blank">${loc.description/script>
+      marker.bindPopup(`<strong>${loc.name}</strong><br>${loc.link}${loc.description}</a>`);
+    });
+  </script>
 </body>
+</html>
