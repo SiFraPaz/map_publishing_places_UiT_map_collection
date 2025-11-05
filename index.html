@@ -5,8 +5,7 @@
   <title>Europakarte mit Publikationsorten</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-ont-family: sans-serif; }
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"0; font-family: sans-serif; }
     #map { height: 100vh; width: 100vw; }
   </style>
 </head>
@@ -14,9 +13,7 @@ ont-family: sans-serif; }
   <div id="map"></div>
 
   <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaft>
-  <script>
-    const map = L.map('map').setView([50.5, 10.5], 5);
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script  const map = L.map('map').setView([50.5, 10.5], 5);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
@@ -30,6 +27,5 @@ ont-family: sans-serif; }
 
     locations.forEach(loc => {
       const marker = L.marker([loc.lat, loc.lng]).addTo(map);
-      marker.bindPopup(`<strong>${loc.name}</strong><br><a href="${loc.link}" target="_blank">${loc.description}</a>`);
-
+      marker.bindPopup(`<strong>${loc.name}</strong><br><a href="${loc.link}" target="_blank">${loc.description}<//body>
 </html>
