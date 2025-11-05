@@ -1,0 +1,1 @@
+# map_publishing_places_UiT_map_collection
