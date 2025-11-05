@@ -17,10 +17,10 @@
     // Erstelle die Karte und setze den Startpunkt
     const map = L.map('map').setView([50.5, 10.5], 3);
     // NASA Blue Marble als Grundkarte
-    L.tileLayer('https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief/default/{time}/{z}/{y}/{x}.jpg', {
+    L.tileLayer('https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief/default/2004-01-01/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg', {
       attribution: 'Imagery courtesy NASA/GSFC, Blue Marble, MODIS, USGS',
       maxZoom: 8,
-      time: '2004-01-01' // Datum der Blue Marble Karte
+      tileSize: 256
     }).addTo(map);
     // Publikationsorte
     const locations = [
