@@ -4,51 +4,32 @@
   <meta charset="UTF-8">
   <title>Europakarte mit Publikationsorten</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  https://unpkg.com/leaflet@1.9.4/dist/leaflet.css
-  <style>
-    body { margin: 0; font-family: sans-serif; }
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+ont-family: sans-serif; }
     #map { height: 100vh; width: 100vw; }
   </style>
 </head>
 <body>
   <div id="map"></div>
 
-  https://unpkg.com/leaflet@1.9.4/dist/leaflet.js</script>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaft>
   <script>
-    const map = L.map('map').setView([50.5, 10.5], 5); // Europa-Zentrum
+    const map = L.map('map').setView([50.5, 10.5], 5);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
     const locations = [
-      {
-        name: "Straßburg",
-        lat: 48.5734,
-        lng: 7.7521,
-        link: "https://example.com/digitalisat-strassburg",
-        description: "Karte von Straßburg, 1680"
-      },
-      {
-        name: "Köln",
-        lat: 50.9375,
-        lng: 6.9603,
-        link: "https://example.com/digitalisat-koeln",
-        description: "Buch über Köln, 1702"
-      },
-      {
-        name: "Wien",
-        lat: 48.2082,
-        lng: 16.3738,
-        link: "https://example.com/digitalisat-wien",
-        description: "Karte von Wien, 1650"
-      }
+      { name: "Straßburg", lat: 48.5734, lng: 7.7521, link: "https://example.com/digitalisat-strassburg", description: "Karte von Straßburg, 1680" },
+      { name: "Köln", lat: 50.9375, lng: 6.9603, link: "https://example.com/digitalisat-koeln", description: "Buch über Köln, 1702" },
+      { name: "Wien", lat: 48.2082, lng: 16.3738, link: "https://example.com/digitalisat-wien", description: "Karte von Wien, 1650" }
     ];
 
     locations.forEach(loc => {
       const marker = L.marker([loc.lat, loc.lng]).addTo(map);
-      marker.bindPopup(`<strong>${loc.name}</strong><br>${loc.link}${loc.description}</a>`);
-    });
-  </script>
-</body>
+      marker.bindPopup(`<strong>${loc.name}</strong><br><a href="${loc.link}" target="_blank">${loc.description}</a>`);
+
 </html>
