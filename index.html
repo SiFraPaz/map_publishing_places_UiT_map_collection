@@ -14,17 +14,21 @@
   <div id="map"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
+    // Erstelle die Karte und setze den Startpunkt
     const map = L.map('map').setView([50.5, 10.5], 5);
-    // OpenHistoricalMap as the base layer
-    L.tileLayer('https://tile.openhistoricalmap.org/tiles/{z}/{x}/{y}.png', {
-      attribution: '© OpenHistoricalMap contributors',
-      maxZoom: 20
+    // CartoDB Positron (ohne Grenzen) als Grundkarte
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19
     }).addTo(map);
+    // Publikationsorte
     const locations = [
       { name: "Straßburg", lat: 48.5734, lng: 7.7521, link: "https://example.com/digitalisat-strassburg", description: "Karte von Straßburg, 1680" },
       { name: "Köln", lat: 50.9375, lng: 6.9603, link: "https://example.com/digitalisat-koeln", description: "Buch über Köln, 1702" },
       { name: "Wien", lat: 48.2082, lng: 16.3738, link: "https://example.com/digitalisat-wien", description: "Karte von Wien, 1650" }
     ];
+    // Marker für jeden Publikationsort hinzufügen
     locations.forEach(loc => {
       const marker = L.marker([loc.lat, loc.lng]).addTo(map);
       marker.bindPopup(`<strong>${loc.name}</strong><br><a href="${loc.link}" target="_blank">${loc.description}</a>`);
