@@ -16,10 +16,10 @@
   <script>
     // Erstelle die Karte und setze den Startpunkt
     const map = L.map('map').setView([50.5, 10.5], 5);
-    // Thunderforest Outdoors als Grundkarte
-    L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey={your_api_key}', {
-      attribution: 'Maps © <a href="https://www.thunderforest.com/">Thunderforest</a>, Data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      maxZoom: 22
+    // Stamen Terrain als Grundkarte
+    L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg', {
+      attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 18
     }).addTo(map);
     // Publikationsorte
     const locations = [
