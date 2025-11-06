@@ -21,8 +21,8 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
-    .leaflet-control-zoom {
-      z-index: 1100; /* Ensure zoom buttons are above other elements */
+    .leaflet-control {
+      z-index: 1100; /* Ensure controls are above other elements */
     }
   </style>
 </head>
@@ -41,6 +41,7 @@
     const map = L.map('map', {
       center: [60, 10], // Centered on Northern Europe
       zoom: 4,
+      zoomControl: true // Ensure zoom controls are enabled
     });
     // Define the OpenStreetMap base layer
     const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
