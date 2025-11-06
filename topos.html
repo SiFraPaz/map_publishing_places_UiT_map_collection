@@ -16,15 +16,13 @@
       background: white;
       position: absolute;
       top: 10px;
-      left: 50px; /* Move the filter slightly to the right */
+      left: 10px;
       z-index: 1000;
       border: 1px solid #ccc;
       border-radius: 5px;
     }
     .leaflet-control-zoom {
-      position: absolute;
-      bottom: 50px; /* Move zoom controls to the bottom-right */
-      right: 10px;
+      z-index: 1100; /* Ensure zoom buttons are above other elements */
     }
   </style>
 </head>
