@@ -49,6 +49,8 @@
     // Create a Marker Cluster Group
     const markers = L.markerClusterGroup();
     const allMarkers = []; // Array to store all markers
+    // Default coordinates for unknown locations
+    const defaultCoords = [0, 0];
     // Function to geocode a location (convert place name to coordinates)
     async function geocodeLocation(location) {
       try {
@@ -58,11 +60,11 @@
           return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
         } else {
           console.warn(`Location not found: ${location}`);
-          return null; // Location not found
+          return defaultCoords; // Use default coordinates for unknown locations
         }
       } catch (error) {
         console.error(`Error during geocoding for location: ${location}`, error);
-        return null;
+        return defaultCoords; // Use default coordinates in case of an error
       }
     }
     // Function to process CSV data
@@ -76,23 +78,21 @@
         const link = row["Permalink"];
         // Geocode the location
         const coords = await geocodeLocation(place);
-        if (coords) {
-          // Add a marker if coordinates are found
-          const marker = L.marker(coords);
-          marker.bindPopup(`
-            <strong>${name}</strong><br>
-            <em>Publisher:</em> ${publisher}<br>
-            <em>Year:</em> ${year}<br>
-            <em>Place:</em> ${place}<br>
-            <a href="${link}" target="_blank">Permalink</a>
-          `);
-          marker.year = year; // Store the year as a property of the marker
-          markers.addLayer(marker); // Add the marker to the cluster group
-          allMarkers.push(marker); // Store the marker in the list
-          // Add the year to the dropdown list
+        // Add a marker even if coordinates are default
+        const marker = L.marker(coords);
+        marker.bindPopup(`
+          <strong>${name}</strong><br>
+          <em>Publisher:</em> ${publisher}<br>
+          <em>Year:</em> ${year}<br>
+          <em>Place:</em> ${place || "Unknown"}<br>
+          <a href="${link}" target="_blank">Permalink</a>
+        `);
+        marker.year = year; // Store the year as a property of the marker
+        markers.addLayer(marker); // Add the marker to the cluster group
+        allMarkers.push(marker); // Store the marker in the list
+        // Add the year to the dropdown list
+        if (year) {
           years.add(year);
-        } else {
-          console.warn(`Skipping marker for place: ${place}`);
         }
       }
       // Add the marker cluster group to the map
