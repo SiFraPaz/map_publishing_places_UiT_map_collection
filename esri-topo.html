@@ -43,7 +43,7 @@
         return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
       } else {
         console.error(`Ort nicht gefunden: ${location}`);
-        return null;
+        return null; // Ort nicht gefunden
       }
     }
     // Marker für jeden Publikationsort hinzufügen
@@ -51,12 +51,23 @@
       for (const loc of locations) {
         const coords = await geocodeLocation(loc.place);
         if (coords) {
+          // Füge einen Marker hinzu, wenn Koordinaten gefunden wurden
           const marker = L.marker(coords).addTo(map);
           marker.bindPopup(`
             <strong>${loc.name}</strong><br>
             <em>Publisher:</em> ${loc.publisher}<br>
             <em>Year:</em> ${loc.year}<br>
             <em>Place:</em> ${loc.place}<br>
+            <a href="${loc.link}" target="_blank">Permalink</a>
+          `);
+        } else {
+          // Füge einen Standard-Marker für unbekannte Orte hinzu
+          const marker = L.marker([0, 0]).addTo(map); // Standardkoordinaten (Äquator)
+          marker.bindPopup(`
+            <strong>${loc.name}</strong><br>
+            <em>Publisher:</em> ${loc.publisher}<br>
+            <em>Year:</em> ${loc.year}<br>
+            <em>Place:</em> <em>Unbekannt</em><br>
             <a href="${loc.link}" target="_blank">Permalink</a>
           `);
         }
