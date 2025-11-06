@@ -16,7 +16,7 @@
       background: white;
       position: absolute;
       top: 10px;
-      left: 10px;
+      left: 50px; /* Move the filter slightly to the right */
       z-index: 1000;
       border: 1px solid #ccc;
       border-radius: 5px;
@@ -40,12 +40,28 @@
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script>
     // Initialize the map and set the starting view
-    const map = L.map('map').setView([60, 10], 4); // Centered on Northern Europe
-    // Add OpenStreetMap as the base map
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const map = L.map('map', {
+      center: [60, 10], // Centered on Northern Europe
+      zoom: 4,
+    });
+    // Define the OpenStreetMap base layer
+    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 18
-    }).addTo(map);
+    });
+    // Define the Esri World Terrain Base layer
+    const esriTopoLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: USGS, Esri, TANA, DeLorme, and NPS',
+      maxZoom: 13
+    });
+    // Add the default base layer (OSM) to the map
+    osmLayer.addTo(map);
+    // Create a Layer Control to switch between base layers
+    const baseMaps = {
+      "OpenStreetMap": osmLayer,
+      "Esri Topography": esriTopoLayer
+    };
+    L.control.layers(baseMaps).addTo(map);
     // Create a Marker Cluster Group
     const markers = L.markerClusterGroup();
     const allMarkers = []; // Array to store all markers
