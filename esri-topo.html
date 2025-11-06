@@ -60,16 +60,7 @@
           `);
           markers.addLayer(marker); // Füge den Marker zur Cluster-Gruppe hinzu
         } else {
-          // Füge einen Standard-Marker für unbekannte Orte hinzu
-          const marker = L.marker([0, 0]); // Standardkoordinaten (Äquator)
-          marker.bindPopup(`
-            <strong>${name}</strong><br>
-            <em>Publisher:</em> ${publisher}<br>
-            <em>Year:</em> ${year}<br>
-            <em>Place:</em> <em>Unbekannt</em><br>
-            <a href="${link}" target="_blank">Permalink</a>
-          `);
-          markers.addLayer(marker); // Füge den Marker zur Cluster-Gruppe hinzu
+          console.error(`Ort nicht gefunden: ${place}`);
         }
       }
       // Füge die Marker-Cluster-Gruppe zur Karte hinzu
