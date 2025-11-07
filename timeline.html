@@ -52,6 +52,11 @@
         const link = row["Permalink"];
         const lat = parseFloat(row["Latitude"]);
         const lon = parseFloat(row["Longitude"]);
+        // Validate coordinates
+        if (isNaN(lat) || isNaN(lon)) {
+          console.warn(`Invalid coordinates for: ${name}, skipping...`);
+          return; // Skip this entry if coordinates are invalid
+        }
         // Create a marker for each entry
         const marker = L.marker([lat, lon]);
         marker.bindPopup(`
