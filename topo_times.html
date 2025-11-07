@@ -15,7 +15,7 @@
       padding: 10px;
       background: white;
       position: absolute;
-      top: 10px;
+      bottom: 10px; /* Move filter to bottom-left */
       left: 10px;
       z-index: 1000;
       border: 1px solid #ccc;
@@ -23,8 +23,8 @@
     }
     .leaflet-control-zoom {
       position: absolute;
-      bottom: 50px; /* Move zoom controls to the bottom-right */
-      right: 10px;
+      top: 10px; /* Move zoom controls to the top-left */
+      left: 10px;
     }
   </style>
 </head>
@@ -41,11 +41,23 @@
   <script>
     // Initialize the map and set the starting view
     const map = L.map('map').setView([60, 10], 4); // Centered on Northern Europe
-    // Add OpenStreetMap as the base map
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Base layers
+    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 18
-    }).addTo(map);
+    });
+    const esriTopoLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ',
+      maxZoom: 18
+    });
+    // Add OpenStreetMap as the default base map
+    osmLayer.addTo(map);
+    // Layer control for switching base maps
+    const baseMaps = {
+      "OpenStreetMap": osmLayer,
+      "ESRI Topo": esriTopoLayer
+    };
+    L.control.layers(baseMaps).addTo(map);
     // Create a Marker Cluster Group
     const markers = L.markerClusterGroup();
     const allMarkers = []; // Array to store all markers
@@ -54,6 +66,10 @@
     // Function to geocode a location (convert place name to coordinates)
     async function geocodeLocation(location) {
       try {
+        // Special case for "Frankfurt on the Main"
+        if (location.toLowerCase() === "frankfurt on the main") {
+          return [50.1109, 8.6821]; // Coordinates for Frankfurt am Main
+        }
         const response = await fetch(`https://nominatim.openstreetmap.org/search?city=${location}&format=json`);
         const data = await response.json();
         if (data.length > 0) {
