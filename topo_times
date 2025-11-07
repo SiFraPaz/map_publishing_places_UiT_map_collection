@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Map of Publishing Places</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <style>
+    body { margin: 0; font-family: sans-serif; }
+    #map { height: 100vh; width: 100vw; }
+    #filter {
+      padding: 10px;
+      background: white;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .leaflet-control-zoom {
+      position: absolute;
+      bottom: 50px; /* Move zoom controls to the bottom-right */
+      right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="filter">
+    <label for="yearFilter">Filter by Year:</label>
+    <select id="yearFilter">
+      <option value="all">All Years</option>
+    </select>
+  </div>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script>
+    // Initialize the map and set the starting view
+    const map = L.map('map').setView([60, 10], 4); // Centered on Northern Europe
+    // Add OpenStreetMap as the base map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 18
+    }).addTo(map);
+    // Create a Marker Cluster Group
+    const markers = L.markerClusterGroup();
+    const allMarkers = []; // Array to store all markers
+    // Default coordinates for unknown locations
+    const defaultCoords = [0, 0];
+    // Function to geocode a location (convert place name to coordinates)
+    async function geocodeLocation(location) {
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?city=${location}&format=json`);
+        const data = await response.json();
+        if (data.length > 0) {
+          return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+        } else {
+          console.warn(`Location not found: ${location}`);
+          return defaultCoords; // Use default coordinates for unknown locations
+        }
+      } catch (error) {
+        console.error(`Error during geocoding for location: ${location}`, error);
+        return defaultCoords; // Use default coordinates in case of an error
+      }
+    }
+    // Function to process CSV data
+    async function processCSVData(data) {
+      const years = new Set(); // Set to store unique years
+      for (const row of data) {
+        const name = row["Name"];
+        const publisher = row["Publisher"];
+        const year = row["Year of Publication"];
+        const place = row["Place of Publication"];
+        const link = row["Permalink"];
+        // Geocode the location
+        const coords = await geocodeLocation(place);
+        // Add a marker even if coordinates are default
+        const marker = L.marker(coords);
+        marker.bindPopup(`
+          <strong>${name}</strong><br>
+          <em>Publisher:</em> ${publisher}<br>
+          <em>Year:</em> ${year}<br>
+          <em>Place:</em> ${place || "Unknown"}<br>
+          <a href="${link}" target="_blank">Permalink</a>
+        `);
+        marker.year = year; // Store the year as a property of the marker
+        markers.addLayer(marker); // Add the marker to the cluster group
+        allMarkers.push(marker); // Store the marker in the list
+        // Add the year to the dropdown list
+        if (year) {
+          years.add(year);
+        }
+      }
+      // Add the marker cluster group to the map
+      map.addLayer(markers);
+      // Populate the dropdown list with years
+      const yearFilter = document.getElementById("yearFilter");
+      Array.from(years).sort().forEach(year => {
+        const option = document.createElement("option");
+        option.value = year;
+        option.textContent = year;
+        yearFilter.appendChild(option);
+      });
+      // Add event listener for the dropdown list
+      yearFilter.addEventListener("change", function () {
+        const selectedYear = this.value;
+        markers.clearLayers(); // Remove all markers from the map
+        if (selectedYear === "all") {
+          // Show all markers
+          allMarkers.forEach(marker => markers.addLayer(marker));
+        } else {
+          // Show only markers for the selected year
+          allMarkers
+            .filter(marker => marker.year === selectedYear)
+            .forEach(marker => markers.addLayer(marker));
+        }
+      });
+    }
+    // Read and process the CSV file
+    Papa.parse('Liste_Kartensammlung.csv', {
+      download: true,
+      header: true,
+      complete: function(results) {
+        processCSVData(results.data);
+      },
+      error: function(error) {
+        console.error("Error reading the CSV file:", error);
+      }
+    });
+  </script>
+</body>
+</html>
