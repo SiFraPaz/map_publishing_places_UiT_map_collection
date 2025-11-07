@@ -64,6 +64,8 @@
     // Create a Marker Cluster Group
     const markers = L.markerClusterGroup();
     const allMarkers = []; // Array to store all markers
+    // Default coordinates for unknown locations
+    const defaultCoords = [0, 0];
     // Function to clean up place names
     function cleanPlaceName(place) {
       if (place === "Frankfurt on the Main" || place === "Frankfurt") {
