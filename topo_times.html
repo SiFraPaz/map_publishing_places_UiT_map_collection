@@ -42,20 +42,20 @@
     // Initialize the map and set the starting view
     const map = L.map('map').setView([60, 10], 4); // Centered on Northern Europe
     // Base layers
+    const esriTerrainLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: USGS, NOAA',
+      maxZoom: 13
+    });
     const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 18
     });
-    const esriTopoLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ',
-      maxZoom: 18
-    });
-    // Add OpenStreetMap as the default base map
-    osmLayer.addTo(map);
+    // Add ESRI Terrain as the default base map
+    esriTerrainLayer.addTo(map);
     // Layer control for switching base maps
     const baseMaps = {
-      "OpenStreetMap": osmLayer,
-      "ESRI Topo": esriTopoLayer
+      "ESRI Terrain (Topography)": esriTerrainLayer,
+      "OpenStreetMap": osmLayer
     };
     L.control.layers(baseMaps).addTo(map);
     // Create a Marker Cluster Group
@@ -92,6 +92,13 @@
         const year = row["Year of Publication"];
         const place = row["Place of Publication"];
         const link = row["Permalink"];
+        // Add specific links for Ziegler and Cosmographia
+        let additionalLink = "";
+        if (name.toLowerCase().includes("ziegler")) {
+          additionalLink = `<br><a href="https://www.digitale-sammlungen.de/de/view/bsb11197407?page=,1" target="_blank">View Ziegler's Work</a>`;
+        } else if (name.toLowerCase().includes("cosmographia") || name.toLowerCase().includes("sebastian münster")) {
+          additionalLink = `<br><a href="https://www.digitale-sammlungen.de/de/view/bsb10801800?page=,1" target="_blank">View Cosmographia</a>`;
+        }
         // Geocode the location
         const coords = await geocodeLocation(place);
         // Add a marker even if coordinates are default
@@ -102,6 +109,7 @@
           <em>Year:</em> ${year}<br>
           <em>Place:</em> ${place || "Unknown"}<br>
           <a href="${link}" target="_blank">Permalink</a>
+          ${additionalLink}
         `);
         marker.year = year; // Store the year as a property of the marker
         markers.addLayer(marker); // Add the marker to the cluster group
