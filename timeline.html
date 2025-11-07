@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Map of Publishing Places</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <style>
+    body { margin: 0; font-family: sans-serif; }
+    #map { height: 100vh; width: 100vw; }
+    #timeline {
+      position: absolute;
+      bottom: 50px;
+      left: 10px;
+      z-index: 1000;
+      width: 300px;
+      background: white;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="timeline"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script>
+    // Initialize the map
+    const map = L.map('map').setView([60, 10], 4);
+    const esriTerrainLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: USGS, NOAA',
+      maxZoom: 13
+    });
+    esriTerrainLayer.addTo(map);
+    const markers = L.markerClusterGroup();
+    const allMarkers = [];
+    const years = new Set();
+    // Process CSV data
+    function processCSVData(data) {
+      data.forEach(row => {
+        const name = row["Name"];
+        const publisher = row["Publisher"];
+        const year = parseInt(row["Year of Publication"]);
+        const place = row["Place of Publication"];
+        const link = row["Permalink"];
+        const lat = parseFloat(row["Latitude"]);
+        const lon = parseFloat(row["Longitude"]);
+        // Create a marker for each entry
+        const marker = L.marker([lat, lon]);
+        marker.bindPopup(`
+          <strong>${name}</strong><br>
+          <em>Publisher:</em> ${publisher}<br>
+          <em>Year:</em> ${year}<br>
+          <em>Place:</em> ${place || "Unknown"}<br>
+          <a href="${link}" target="_blank">Permalink</a>
+        `);
+        marker.year = year;
+        markers.addLayer(marker);
+        allMarkers.push(marker);
+        years.add(year);
+      });
+      map.addLayer(markers);
+      createTimeline(Array.from(years).sort((a, b) => a - b));
+    }
+    // Create timeline slider
+    function createTimeline(yearsArray) {
+      const timeline = document.getElementById('timeline');
+      const minYear = Math.min(...yearsArray);
+      const maxYear = Math.max(...yearsArray);
+      noUiSlider.create(timeline, {
+        start: [minYear, maxYear],
+        connect: true,
+        range: {
+          'min': minYear,
+          'max': maxYear
+        },
+        step: 1,
+        tooltips: [true, true],
+        format: {
+          to: value => Math.round(value),
+          from: value => Math.round(value)
+        }
+      });
+      timeline.noUiSlider.on('update', function (values) {
+        const [startYear, endYear] = values.map(v => parseInt(v));
+        markers.clearLayers();
+        allMarkers
+          .filter(marker => marker.year >= startYear && marker.year <= endYear)
+          .forEach(marker => markers.addLayer(marker));
+      });
+    }
+    // Load CSV file
+    Papa.parse('Liste_Kartensammlung_geo.csv', {
+      download: true,
+      header: true,
+      complete: function(results) {
+        processCSVData(results.data);
+      },
+      error: function(error) {
+        console.error("Error reading the CSV file:", error);
+      }
+    });
+  </script>
+</body>
+</html>
